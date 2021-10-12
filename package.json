@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hide-terminal-cursor": "0.0.1"
+    "hide-terminal-cursor": "0.0.1",
+    "inquirer": "^8.2.0",
+    "yargs": "^17.2.1"
   }
 }
