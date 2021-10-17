@@ -1,77 +1,94 @@
 const fs = require("fs");
 const path = require("path");
-const readline = require("readline");
 const inquirer = require("inquirer");
+const yargs = require("yargs");
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const options = yargs.usage("Usage: -p <path>").option({
+  p: {
+    alias: "path",
+    describe: "Path to directory",
+    type: "string",
+    default: process.cwd(),
+    demandOption: false,
+  },
+  t: {
+    alias: "text",
+    describe: "Text of find",
+    type: "string",
+    default: "",
+    demandOption: false,
+  },
+}).argv;
 
-// rl.question("Please enter the path to the file: ", function (inputedPath) {
-//   const filePath = path.join(__dirname, inputedPath);
-//   fs.readFile(filePath, "utf8", (err, data) => {
-//     console.log(data);
-//     rl.close();
-//   });
-// });
+class listDir {
+  constructor(path, fileName) {
+    this.path = path;
+    this.fileName = fileName;
+  }
+  isDir() {
+    return fs.lstatSync(this.path).isDirectory();
+  }
+}
 
-// rl.on("close", function () {
-//   process.exit(0);
-// });
+//Сортирует список, сначало директории, потом файлы.
+function getListSort(curDir, itemsList) {
+  const dir = [];
+  const file = [];
 
-const isFile = (fileName) => {
-  return fs.lstatSync(fileName).isFile();
-};
-const list = fs.readdirSync(__dirname).filter(isFile);
-
-inquirer
-  .prompt([
-    {
-      name: "fileName",
-      type: "list",
-      message: "Choose file:",
-      choices: list,
-    },
-  ])
-  .then((answer) => {
-    //console.log(answer.fileName);
-    const filePath = path.join(__dirname, answer.fileName);
-    fs.readFile(filePath, "utf8", (err, data) => {
-      console.log(data);
-    });
+  itemsList.forEach((item) => {
+    const fullPath = path.join(curDir, item);
+    if (fullPath !== undefined) {
+      try {
+        fs.lstatSync(fullPath).isDirectory() ? dir.push(item) : file.push(item);
+      } catch (err) {
+        //console.log(err);
+      }
+    }
   });
+  return [...dir, ...file];
+}
 
-// const fs = require("fs");
-// const rl = require("readline");
+const run = (dir) => {
+  const list = getListSort(dir, fs.readdirSync(dir));
+  const itemsDir = list.map(
+    (nameItem) => new listDir(path.join(dir, nameItem), nameItem)
+  );
 
-// const readStream = fs.createReadStream("./access.log", "utf-8");
-// const writeStream89 = fs.createWriteStream(
-//   "p:/%89.123.1.41%_requests.log",
-//   "utf-8"
-// );
-// const writeStream34 = fs.createWriteStream(
-//   "p:/%34.48.240.111%_requests.log",
-//   "utf-8"
-// );
+  inquirer
+    .prompt([
+      {
+        name: "destination",
+        type: "list",
+        message: "Choosed:",
+        choices: itemsDir.map((item) => ({
+          name: item.isDir() ? `[${item.fileName}]` : item.fileName,
+          value: item,
+        })),
+      },
+    ])
+    .then((answer) => {
+      if (answer.destination.isDir()) {
+        run(answer.destination.path);
+      } else {
+        const regex = new RegExp(options.t, "gi");
+        console.log(options.t);
+        fs.readFile(answer.destination.path, "utf8", (err, data) => {
+          if (options.t) {
+            if (regex.test(data)) {
+              console.log(
+                `Текст "${options.t}" в файле "${answer.destination.fileName}" найден`
+              );
+            } else {
+              console.log(
+                `Текст "${options.t}" в файле "${answer.destination.fileName}" не найден`
+              );
+            }
+          } else {
+            console.log(data);
+          }
+        });
+      }
+    });
+};
 
-// const expr89 = /89\.123\.1\.41.*/g;
-// const expr34 = /34\.48\.240\.111.*/g;
-
-// let readline = rl.createInterface(readStream);
-// let record1 = 0;
-// let record2 = 0;
-
-// readline.on("line", (line) => {
-//   const match89 = line.match(expr89);
-//   const match34 = line.match(expr34);
-
-//   if (match89) {
-//     record1++;
-//     writeStream89.write(`Record ${record1} - ` + match89.toString() + "\n");
-//   }
-//   if (match34) {
-//     record2++;
-//     writeStream34.write(`Record ${record2} - ` + match34.toString() + "\n");
-//   }
-// });
+run(options.path);
