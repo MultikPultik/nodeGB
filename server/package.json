@@ -11,8 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "hide-terminal-cursor": "0.0.1",
     "inquirer": "^8.2.0",
+    "node-static": "^0.7.11",
     "yargs": "^17.2.1"
   }
 }
