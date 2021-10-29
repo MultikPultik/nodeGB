@@ -15,8 +15,7 @@ code {
 .code-box-demo {
   text-align: center;
 }
-.ant-layout-header,
-.ant-layout-footer {
+.ant-layout-header {
   color: #fff;
   background: #7dbcea;
 }
@@ -26,9 +25,7 @@ code {
 [data-theme="dark"] .ant-layout-footer {
   background: #8a9297;
 }
-.ant-layout-footer {
-  line-height: 1.5;
-}
+
 .ant-layout-sider {
   color: #fff;
   line-height: 66px;
@@ -42,11 +39,12 @@ code {
 }
 .ant-layout-content {
   padding: 10px;
-  color: #fff;
+  /* color: #fff; */
+  color: rgb(245, 229, 8);
   overflow-y: auto;
   /* max-height: 100vh; */
   /* line-height: 120px; */
-  background: rgba(16, 142, 233, 1);
+  background: rgb(43, 44, 44);
 }
 [data-theme="dark"] .ant-layout-content {
   background: #107bcb;
@@ -58,4 +56,8 @@ code {
 .ant-list-items > .ant-list-item {
   padding: 2px;
   cursor: pointer;
+}
+
+a {
+  color: white;
 }

@@ -13,7 +13,7 @@ class listDir {
   }
   isDir() {
     return fs.lstatSync(this.path).isDirectory();
-  }
+  } 
 }
 
 //Сортирует список, сначало директории, потом файлы.
