@@ -41,7 +41,10 @@ const run = (dir) => {
   );
 
   const toDest = itemsDir.map((item) => {
-    return item.isDir() ? `[${item.fileName}]` : item.fileName;
+    // return item.isDir() ? `[${item.fileName}]` : item.fileName;
+    return item.isDir()
+      ? { link: item.fileName, isDir: true }
+      : { link: item.fileName, isDir: false };
   });
 
   //console.log(toDest);
@@ -57,26 +60,40 @@ app.use(cors());
 app.use("/", express.static(path.join(__dirname, "/../client/dist/")));
 
 app.get("/root", (req, res) => {
+  //console.log(run(__dirname, res.json));
   res.json(run(__dirname, res.json));
+  
   //console.log(req.path);
 });
 
 app.get(/\/root\/.*/, (req, res) => {
-  // fs.readdir(path.join(__dirname, "." || "node_modules"), (err, data) => {
-  //   //console.log(data);
-  //   // res.send(JSON.stringify(data));
-  //   res.json(data);
-  // });
-  //console.log(req.url.replace("/root/", ""));
-  res.send(fs.readFileSync(path.join(__dirname, req.url.replace("/root", ""))))
-  
-  //console.log(req.url);
-});
+  let link = req.url.replace("/root", "");
+  if (fs.lstatSync(path.join(__dirname,link)).isDirectory()){
+    res.json(run(path.join(__dirname, link)));
+  } else {
+    res.send(
+      //console.log(path.join(__dirname, req.url.replace("/root", "")))
+      // fs.readFileSync(path.join(__dirname, req.url.replace("/root", "")))
+      fs.readFileSync(path.join(__dirname, link))
+    );
 
+  }
+  // if (fs.lstatSync(link))  
+    // fs.readdir(path.join(__dirname, "." || "node_modules"), (err, data) => {
+    //   //console.log(data);
+    //   // res.send(JSON.stringify(data));
+    //   res.json(data); 
+    // }); 
+    //console.log(req.url.replace("/root/", ""));
+
+  //console.log(req.url); 
+});
+  
 // app.use(function(req, res, next) {
 //   res.status(404).send('Sorry cant find that!');
 // });
 
-// app.use(function (err, req, res, next) {
+// app.use(function (err, req, res, next) { 
 //   console.error(err.stack);
-//   res.status(500).send("Something broke!"); 
+//   res.status(500).send("Something broke!");
+   
