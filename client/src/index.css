@@ -55,7 +55,11 @@ code {
   margin-top: 48px;
 }
  
-.ant-list-items > .ant-list-item {
+.ant-list-items > .ant-list-item{
   padding: 2px;
   cursor: pointer;
+}
+
+.ant-list-items > .ant-list-item a{
+  color: wheat;
 }

@@ -67,7 +67,9 @@ app.get("/root", (req, res) => {
 });
 
 app.get(/\/root\/.*/, (req, res) => {
-  let link = req.url.replace("/root", "");
+  let link = req.url.replace(/^.*root\//, "");
+  console.log(link);
+
   if (fs.lstatSync(path.join(__dirname,link)).isDirectory()){
     res.json(run(path.join(__dirname, link)));
   } else {
@@ -79,14 +81,13 @@ app.get(/\/root\/.*/, (req, res) => {
 
   }
   // if (fs.lstatSync(link))  
-    // fs.readdir(path.join(__dirname, "." || "node_modules"), (err, data) => {
-    //   //console.log(data);
-    //   // res.send(JSON.stringify(data));
-    //   res.json(data); 
-    // }); 
-    //console.log(req.url.replace("/root/", ""));
+  //   fs.readdir(path.join(__dirname, "." || "node_modules"), (err, data) => {
+  //     //console.log(data);
+  //     // res.send(JSON.stringify(data));
+  //     res.json(data); 
+  //   }); 
+  //   console.log(req.url.replace("/root/", ""));
 
-  //console.log(req.url); 
 });
   
 // app.use(function(req, res, next) {

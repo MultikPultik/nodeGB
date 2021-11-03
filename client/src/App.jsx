@@ -3,48 +3,54 @@ import { Layout, List, Typography } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
 
 const port = 5000;
-const server = "http://localhost:";
+const server = "http://localhost:" + port;
 
 function App() {
-  const [count, setCount] = useState([]);
-  const list = [
-    "index.js",
-    "node_modules",
-    "package-lock.json",
-    "package.json",
-    "server-express.js",
-    "server-node-static.js",
-    "server.js",
-  ];
+  const [list, setList] = useState([]);
+  const [currentDir, setCurrentDir] = useState([""]);
+
+  const getList = (data, dir = "") =>
+    data.map((item) => {
+      return (
+        <a href={server + "/root/" + dir + item.link}>
+          {item.isDir ? `[${item.link}]` : item.link}
+        </a>
+      );
+    });
 
   useEffect(() => {
-    fetch(server + port + "/root")
+    fetch(server + "/root")
       .then((res) => res.json())
       .then((data) => {
-        // console.log("Отклик - ", data);
-        const list = data.map((item) => (
-          <a href={server + port + "/root/" + item.toString()}>{item}</a>
-        ));
-        setCount([...list]);
+        setList([...getList(data)]);
       });
   }, []);
 
-  function handleListonClick(e) {
+  function handleListOnClick(e) {
     e.preventDefault();
-    const curElement = e.target.textContent;
-    console.log("click at ", e.target.textContent);
+    // console.log("href - ", e.target.href);
+    const curLink = e.target.href.replace(/^.*root\//, "");
+    let fullLink = currentDir[currentDir.length - 1] + curLink;
+    console.log("currentLink - ", curLink);
 
-    fetch(server + port + "/root/" + curElement)
-      .then((res) => res.text())
-      .then((data) => {
-        console.log(data);
-        // console.log(data.toString('UTF-8'));
-        // const list = data.map((item) => (
-        //   <a href={server + port + "/root/" + item.toString()}>{item}</a>
-        // ));
-        // setCount([...list]);
-      })
-      //.catch(er => console.log(er))
+    if (e.target.textContent[0] === "[") {
+      //console.log("state - ", server + "/root/" + fullLink);
+      fetch(server + "/root/" + fullLink)
+        .then((res) => res.json())
+        .then((data) => {
+          setList([
+            ...getList([{ isDir: false, link: "..." }, ...data], curLink + "/"),
+          ]);
+        });
+      setCurrentDir([...currentDir.concat(curLink + "/")]);
+    } else {
+      //console.log("getFile - ", server + "/root/" + currentDir + curLink);
+      fetch(server + "/root/" + fullLink)
+        .then((res) => res.text())
+        .then((data) => {
+          // console.log(data);
+        });
+    }
   }
 
   return (
@@ -54,12 +60,11 @@ function App() {
           Панель управления
           <List
             // bordered
-            dataSource={count}
+            dataSource={list}
             renderItem={(item) => (
-              <List.Item onClick={handleListonClick}>{item}</List.Item>
+              <List.Item onClick={handleListOnClick}>{item}</List.Item>
             )}
           />
-          <Content></Content>
         </Sider>
         <Layout>
           <Header>Файловый менеджер</Header>
