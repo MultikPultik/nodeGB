@@ -1,0 +1,46 @@
+.code-box-demo {
+  text-align: center;
+}
+.ant-layout-header {
+  color: #fff;
+  background: #7dbcea;
+}
+[data-theme="dark"] .ant-layout-header {
+  background: #6aa0c7;
+}
+[data-theme="dark"] .ant-layout-footer {
+  background: #8a9297;
+}
+
+.ant-layout-sider {
+  color: #fff;
+  line-height: 66px;
+  padding: 5px;
+  min-height: 100vh;
+  background: #4f7895;
+  overflow-y: auto;
+}
+[data-theme="dark"] .ant-layout-sider {
+  background: #3499ec;
+}
+.ant-layout-content {
+  padding: 10px;
+  color: rgb(245, 229, 8);
+  overflow-y: auto;
+  background: rgb(43, 44, 44);
+}
+[data-theme="dark"] .ant-layout-content {
+  background: #107bcb;
+}
+.code-box-demo > .ant-layout + .ant-layout {
+  margin-top: 48px;
+}
+ 
+.ant-list-items > .ant-list-item {
+  padding: 2px;
+  cursor: pointer;
+}
+
+a {
+  color: white;
+}
