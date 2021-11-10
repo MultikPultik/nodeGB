@@ -27,7 +27,7 @@ function getListSort(curDir, itemsList) {
       try {
         fs.lstatSync(fullPath).isDirectory() ? dir.push(item) : file.push(item);
       } catch (err) {
-        //console.log(err);
+        console.log(err);
       }
     }
   });
@@ -41,60 +41,32 @@ const run = (dir) => {
   );
 
   const toDest = itemsDir.map((item) => {
-    // return item.isDir() ? `[${item.fileName}]` : item.fileName;
     return item.isDir()
       ? { link: item.fileName, isDir: true }
       : { link: item.fileName, isDir: false };
   });
 
-  //console.log(toDest);
-  //console.log(cb(toDest));
   return toDest;
 };
-//run(__dirname);
 
-// This displays message that the server running and listening to specified port
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
 app.use(cors());
+
+//эта роутинг на готовый бандл
 app.use("/", express.static(path.join(__dirname, "/../client/dist/")));
 
-app.get("/root", (req, res) => {
-  //console.log(run(__dirname, res.json));
+//это роутинг для клиента запущенного на другом тестовом сервере
+app.get("/root", cors(), (req, res) => {
   res.json(run(__dirname, res.json));
-  
-  //console.log(req.path);
 });
 
-app.get(/\/root\/.*/, (req, res) => {
+app.get(/\/root\/.*/, cors(), (req, res) => {
   let link = req.url.replace(/^.*root\//, "");
-  console.log(link);
 
-  if (fs.lstatSync(path.join(__dirname,link)).isDirectory()){
+  if (fs.lstatSync(path.join(__dirname, link)).isDirectory()) {
     res.json(run(path.join(__dirname, link)));
   } else {
-    res.send(
-      //console.log(path.join(__dirname, req.url.replace("/root", "")))
-      // fs.readFileSync(path.join(__dirname, req.url.replace("/root", "")))
-      fs.readFileSync(path.join(__dirname, link))
-    );
-
+    res.send(fs.readFileSync(path.join(__dirname, link)));
   }
-  // if (fs.lstatSync(link))  
-  //   fs.readdir(path.join(__dirname, "." || "node_modules"), (err, data) => {
-  //     //console.log(data);
-  //     // res.send(JSON.stringify(data));
-  //     res.json(data); 
-  //   }); 
-  //   console.log(req.url.replace("/root/", ""));
-
 });
-  
-// app.use(function(req, res, next) {
-//   res.status(404).send('Sorry cant find that!');
-// });
-
-// app.use(function (err, req, res, next) { 
-//   console.error(err.stack);
-//   res.status(500).send("Something broke!");
-   
