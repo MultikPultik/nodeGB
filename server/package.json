@@ -1,21 +1,16 @@
 {
   "name": "HW",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Lessson-6",
+  "main": "server.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "AvisRara",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "hide-terminal-cursor": "0.0.1",
-    "inquirer": "^8.2.0",
-    "node-static": "^0.7.11",
-    "yargs": "^17.2.1"
+    
   }
 }
