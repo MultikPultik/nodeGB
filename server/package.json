@@ -11,6 +11,6 @@
   "author": "AvisRara",
   "license": "ISC",
   "dependencies": {
-    
+    "socket.io": "^4.3.2"
   }
 }

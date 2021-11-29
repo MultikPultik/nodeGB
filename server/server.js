@@ -1,59 +1,82 @@
+const io = require("socket.io");
 const fs = require("fs");
+const http = require("http");
 const path = require("path");
 
-const filePath = path.join(
-  __dirname + "/../client/tree-project/dist/",
-  "index.html"
-);
-//const filePath = __dirname + '/../client/tree-project/dist/';
-//const readStream = fs.createReadStream(filePath);
+const app = http.createServer((request, response) => {
+  if (request.method === "GET") {
+    const filePath = path.join(__dirname, "../client/index.html");
 
-const http = require("http");
-http
-  .createServer(function (request, response) {
-    console.log(`Заголовки запроса: \n${JSON.stringify(request.headers)}\n`);
-    response.writeHead(200, { "Content-Type": "text/html" });
-    fs.readFile(filePath, (err, data) => {
-      if (request.url.endsWith(".html")) {
-        response.writeHeader(200, {
-          "Content-Type": "text/html",
-        });
-      }
+    readStream = fs.createReadStream(filePath);
+    readStream.pipe(response);
+  } else if (request.method === "POST") {
+    let data = "";
 
-      if (request.url.endsWith(".css")) {
-        response.writeHeader(200, {
-          "Content-Type": "text/css",
-        });
-      }
-
-      // if (request.url.endsWith(".js")) {
-      //   response.writeHeader(200, {
-      //     "Content-Type": "application/javascript",
-      //   });
-      // }
-
-      response.write(data);
-      response.end();
+    request.on("data", (chunk) => {
+      data += chunk;
     });
-    //readStream.pipe(response)
+    request.on("end", () => {
+      const parsedData = JSON.parse(data);
+
+      console.log(parsedData);
+      // response.writeHead(200, { "Content-Type": "json" });
+      response.end(data);
+    });
+  } else {
+    response.statusCode = 405;
+    response.end();
+  }
+});
+
+const users = [];
+const socket = io(app);
+
+function findUserIndex(userID) {
+  return users.findIndex((el) => {
+    return el.ID === userID;
+  });
+}
+
+function addUser(userID) {
+  users.push({ ID: userID, user: `User${users.length}` });
+}
+
+socket.on("connection", function (socket) {
+  console.log("New connection");
+  
+  if(findUserIndex(socket.id) === -1){
+    addUser(socket.id);
+    console.log(users);
+  }
+
+  socket.on("connected", ()=>{
+    socket.emit("SERVER_MSG", {
+      msg: `User${findUserIndex(socket.id)} connected`,
+      user: `User${findUserIndex(socket.id)}`,
+    });
   })
-  .listen(5555, () => console.log("Сервер запущен на порте 5555"));
+   
+  socket.on("disconnect", () => {
+    console.log("socket id - ", socket.id, "disconnected");
+  });
 
-// const server = http.createServer((req, res) => {
-//     // console.log(`Worker ${process.pid} handling request`);
-//     // res.writeHead(200, {
-//     //     'Content-Type': 'text/html'
-//     // });
-//     // readStream.pipe(res);
+  socket.broadcast.emit("NEW_CONN_EVENT", {
+    msg:  `User${findUserIndex(socket.id)} connected`,
+    user: `User${findUserIndex(socket.id)}`,
+  }); 
 
-//     setTimeout(() => {
-//         console.log(`Worker ${process.pid} handling request`);
-//         res.writeHead(200, {
-//             'Content-Type': 'text/html'
-//         });
-//         readStream.pipe(res);
-//     }, 5000);
-// });
+  socket.on("CLIENT_MSG", (data) => {
+    // users.push({id, nik})
+    // console.log(users);
+    socket.broadcast.emit("SERVER_MSG", {
+      msg: data.msg,
+      user: `User${findUserIndex(socket.id)}`,
+    });
+    socket.emit("SERVER_MSG", {
+      msg: data.msg,
+      user: `User${findUserIndex(socket.id)}`,
+    });
+  }); 
+});
 
-// console.log(`Worker ${process.pid} is running`);
-// server.listen(5555);
+app.listen(3000, () => console.log("Сервер запущен на порте 3000"));
