@@ -1,8 +1,105 @@
+* {
+	padding: 0;
+	margin: 0;
+}
 
-
+body {
+  background-color: #18191a;
+  color: #f5f6f7;
+}
 .container {
-  background-color: rebeccapurple;
+  max-width: 1200px;
+  height: 100vh;
+  margin: 0 auto;
 }
-.layout-users {
-  background-color: yellowgreen;
+
+.wrap-chart{
+  display: flex;
+  width: inherit;
+  height: inherit;
+  margin: 0 10px;
 }
+
+.left-panel{
+  border: solid 1px;
+  border-color: #727273;
+  flex: 1;
+  margin-right: 5px;
+}
+
+.right-panel{
+  flex: 2;
+  display: flex;
+  border: solid 1px;
+  border-color: #727273;
+  height: auto;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.topic{
+  margin: 5px;
+  padding: 5px;
+}
+
+.wrap-user{
+  display: flex;
+  align-items:center;
+  border-bottom: dashed 1px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.wrap-user > img {
+  border-radius: 50%;
+}
+.wrap-user .user-nickname  {
+  margin-left: 30px;
+}
+
+.wrap-messages{
+  display: flex;
+  align-self: flex-start;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.card{
+  /* border: solid 1px black; */
+  margin: 10px 50px;
+  padding: 10px 10px;
+  border-radius: 5px;
+  background: #282a36;
+}
+
+.card .card-title{
+  font-size: 1rem;
+  font-weight: 700;
+  color: blueviolet;
+  margin: 0;
+  margin-top: -10px;
+  padding: 0;
+}
+.card .card-text{
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.hr{
+  border: solid 1px;
+  border-color: #727273;
+}
+.wrap-submit{
+  margin: 10px;
+  display: flex;
+}
+
+#input{
+  width: 100%;
+  margin-right: 10px;
+}
+
+

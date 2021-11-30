@@ -4,36 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    />
-
-    <style>
-      /* .container {
-        background-color: rebeccapurple;
-      } */
-      .layout-users {
-        background-color: yellowgreen;
-        height: 100vh;
-      }
-      .layout-messages {
-        background-color: blanchedalmond;
-        height: 100vh;
-        display: flex;
-        align-items: end;
-      }
-      .list-messages {
-        width: inherit;
-      }
-      .submit-msg {
-        display: block;
-        width: 100%;
-      }
-    </style>
+    <link rel="stylesheet" href="css/style.css" />
     <title>Socket App</title>
     <script
       src="https://cdn.socket.io/3.1.1/socket.io.min.js"
@@ -43,7 +14,42 @@
   </head>
   <body>
     <div class="container">
-      <div class="row justify-content-between">
+      <div class="wrap-chart">
+        <div class="left-panel">
+          <div class="topic">
+            <h2>Пользователи</h2>
+          </div>
+          <hr />
+          <div id="list-users">
+            <div class="wrap-user">
+              <img src="https://i.pravatar.cc/50" alt="" />
+              <div class="user-nickname">User1</div>
+            </div>
+          </div>
+        </div>
+        <div class="right-panel">
+          <div class="wrap-messages">
+            <div class="card">
+                <h5 class="card-title">${data.user}</h5>
+                <p class="card-text">${data.msg}</p>
+            </div>
+            <div class="card">
+                <h5 class="card-title">${data.user}</h5>
+                <p class="card-text">msg1</p>
+            </div>
+            <div class="card">
+              <h5 class="card-title">${data.user}</h5>
+              <p class="card-text">msg2</p>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <div class="wrap-submit">
+            <input type="text" id="input" autofocus />
+            <input type="submit" id="send" value="Send" />
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row justify-content-between">
         <div class="col-3 layout-users">
           <h4 id="user"></h4>
         </div>
@@ -54,67 +60,9 @@
             <input type="submit" id="send" value="Send" />
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
-    <script type="text/javascript">
-      const socket = io("localhost:3000");
-      const addMessage = (data) => {
-        document.getElementById("messages").insertAdjacentHTML(
-          "beforeend",
-          `<div  class="card" style="width: 18rem">
-            <div class="card-body">
-              <h5 class="card-title">${data.user}</h5>
-              <p class="card-text">
-                ${data.msg}
-              </p>
-            </div>
-          </div>`
-        );
-        document
-          .getElementById("messages")
-          .append(document.createElement("br"));
-      };
-
-      socket.on("connect", function () {
-        console.log("Successful connected to server");
-        socket.emit("connected");
-      });
-      socket.on("SERVER_MSG", function (data) {
-        console.log(data);
-        document.getElementById("user").innerText = `${data.user}`;
-        addMessage(data);
-      });
-
-      socket.on("NEW_CONN_EVENT", function (data) {
-        console.log(data);
-        addMessage(data);
-      });
-
-      document.getElementById("send").onclick = function () {
-        socket.emit("CLIENT_MSG", {
-          msg: document.getElementById("input").value,
-        });
-        document.getElementById("input").value = "";
-      };
-    </script>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
+    <script src="script/script.js"></script>
   </body>
 </html>
